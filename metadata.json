@@ -1,0 +1,7 @@
+{
+  "name": "ZenDo - AI-Powered Productivity",
+  "description": "A sophisticated todo list application featuring local and Flask backend support, with built-in AI for task decomposition and productivity insights.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
