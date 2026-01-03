@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { authApi } from '../services/api';
 
 interface AuthProps {
   onLogin: (data: { token: string; user: any }) => void;
@@ -17,22 +18,15 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
     setError('');
 
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      // Mock successful auth
-      const mockData = {
-        token: 'mock-jwt-token-12345',
-        user: {
-          id: 'u1',
-          username: formData.username || 'ProductiveUser',
-          email: formData.email || 'user@example.com'
-        }
-      };
-      
-      onLogin(mockData);
-    } catch (err) {
-      setError('Invalid credentials. Please try again.');
+      if (isLogin) {
+        const data = await authApi.login({ email: formData.email, password: formData.password });
+        onLogin(data);
+      } else {
+        const data = await authApi.register(formData);
+        onLogin(data);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Authentication failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
@@ -90,7 +84,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-500 transition-all active:scale-95 disabled:opacity-50 shadow-lg shadow-blue-500/20"
+            className="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all active:scale-95 disabled:opacity-50 shadow-lg shadow-blue-500/20"
           >
             {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Sign Up')}
           </button>
